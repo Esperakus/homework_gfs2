@@ -1,0 +1,26 @@
+---
+# tasks file for gfs
+
+  - name: install pacemaker
+    dnf:
+      name: "{{ packages }} "
+      state: present
+      enablerepo:
+        - HighAvailability
+    vars:
+      packages:
+        - pacemaker 
+        - pcs 
+        - fence-agents-all
+
+  - name: turn off stonith (not for prod, but for yandex.cloud)
+    command: pcs property set stonith-enabled=false
+
+  - name: start pcs
+    systemd:
+      name: pcsd
+      enabled: true
+      state: started
+
+  
+      

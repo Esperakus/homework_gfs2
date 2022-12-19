@@ -21,14 +21,14 @@
 
   - name: Upgrade all
     # become: true
-    yum:
+    dnf:
       name: '*'
       state: latest
       update_cache: true
 
   - name: Install packages
     # become: true
-    yum:
+    dnf:
       name: "{{ packages }} "
       state: present
     vars:

@@ -79,7 +79,7 @@ resource "yandex_compute_instance" "ansible" {
   depends_on = [
     yandex_compute_instance.gfs,
     yandex_compute_instance.iscsi,
-    ]
+  ]
 }
 
 resource "yandex_compute_instance" "gfs" {

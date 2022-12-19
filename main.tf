@@ -40,8 +40,8 @@ resource "local_file" "hosts" {
   filename = "ansible/hosts"
   content = templatefile("hosts.tpl",
     {
-      gfs_workers = yandex_compute_instance.gfs.*.network_interface.0.ip_address
-      iscsi_workers   = yandex_compute_instance.iscsi.*.network_interface.0.ip_address
+      gfs_workers   = yandex_compute_instance.gfs.*.network_interface.0.ip_address
+      iscsi_workers = yandex_compute_instance.iscsi.*.network_interface.0.ip_address
       # db_workers      = yandex_compute_instance.db.*.network_interface.0.ip_address
   })
   depends_on = [

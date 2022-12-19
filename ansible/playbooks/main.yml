@@ -1,0 +1,22 @@
+---
+- hosts: all
+
+  roles:
+    - { role: general-el8, become: true}
+    # - selinux
+
+- hosts: nginx_hosts
+
+  roles:
+   - { role: nginx, become: true}
+
+- hosts: db_hosts
+
+  roles:
+   - { role: postgresql-ol8, become: true}
+
+
+- hosts: backend_hosts
+
+  roles:
+   - { role: backend, become: true }

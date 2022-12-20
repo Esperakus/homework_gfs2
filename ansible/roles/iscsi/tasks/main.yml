@@ -9,10 +9,18 @@
   - name: create vgroup
     lvg:
       vg: iscsi
-      pvs: s/dev/vdb
+      pvs: /dev/vdb
 
   - name: create target lvm
     lvol:
       vg: iscsi
       lv: lvm
       size: 100%FREE
+
+  - name: create target
+    shell: |
+      targetcli /backstores/block create disk01 /dev/iscsi/lvm
+      targetcli /iscsi create iqn.2022-12.ru.otus:storage.target00
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/portals create 0.0.0.0
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/luns create /backstores/block/disk01 lun=1
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1 set attribute authentication=0

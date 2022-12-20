@@ -11,8 +11,8 @@
         - pcs 
         - fence-agents-all
 
-  - name: turn off stonith (not for prod, but for yandex.cloud)
-    command: pcs property set stonith-enabled=false
+  # - name: turn off stonith (not for prod, but for yandex.cloud)
+  #   command: pcs property set stonith-enabled=false
 
   - name: start pcs
     systemd:

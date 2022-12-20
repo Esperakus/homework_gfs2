@@ -99,6 +99,8 @@ resource "yandex_compute_instance" "gfs" {
     }
   }
 
+  
+
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet01.id
     # nat       = true
@@ -126,6 +128,11 @@ resource "yandex_compute_instance" "iscsi" {
     }
   }
 
+  secondary_disk {
+    disk_id = yandex_compute_disk.iscsi.id
+    device_name = "iscsi_disk"
+  }
+  
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet01.id
     # nat       = true
@@ -137,3 +144,7 @@ resource "yandex_compute_instance" "iscsi" {
 
 }
 
+resource "yandex_compute_disk" "iscsi" {
+  name = "iscsi-target"
+  size = 2
+}

@@ -1,2 +1,18 @@
 ---
 # tasks file for iscsi
+
+  - name: install targetcli
+    dnf:
+      name: targetcli
+      state: present
+
+  - name: create vgroup
+    lvg:
+      vg: iscsi
+      pvs: s/dev/vdb
+
+  - name: create target lvm
+    lvol:
+      vg: iscsi
+      lv: lvm
+      size: 100%FREE

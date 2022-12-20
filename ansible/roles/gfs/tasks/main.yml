@@ -9,9 +9,13 @@
         - ha
     vars:
       packages:
-        - pacemaker 
-        - pcs 
-        - fence-agents-all
+      - 'cluster-glue'
+      - 'corosync'
+      - 'crmsh'
+      - 'fence-agents'
+      - 'pacemaker'
+      - 'pcs'
+      - 'resource-agents'
 
   - name: start pcs
     systemd:

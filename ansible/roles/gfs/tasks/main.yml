@@ -6,15 +6,12 @@
       name: "{{ packages }} "
       state: present
       enablerepo:
-        - HighAvailability
+        - ha
     vars:
       packages:
         - pacemaker 
         - pcs 
         - fence-agents-all
-
-  - name: turn off stonith (not for prod, but for yandex.cloud)
-    command: pcs property set stonith-enabled=false
 
   - name: start pcs
     systemd:
@@ -22,5 +19,5 @@
       enabled: true
       state: started
 
-  
-      
+  - name: turn off stonith (not for prod, but for yandex.cloud)
+    command: pcs property set stonith-enabled=false

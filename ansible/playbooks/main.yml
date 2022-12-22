@@ -1,35 +1,20 @@
 ---
 
 - hosts: all
-
   roles:
-    - { role: general-el8, become: true}
+    - { role: general-el8, become: true }
+
+- hosts: gfs_hosts
+  roles:
+    # - { role: pcs, become: true }
+    # - { role: ondrejhome.ha-cluster-pacemaker, become: true, cluster_name: 'test-cluster', cluster_etc_hosts: false, cluster_firewall: false, cluster_configure_fence_xvm: false, cluster_user_pass: 'Rawocosi32!' }
+    - {role: pacemaker, become: true}
+
+# - hosts: iscsi_hosts
+#   roles:
+#    - { role: iscsi, become: true }
 
 # - hosts: gfs_hosts
-
 #   roles:
-#    - { role: ansible.ha-cluster-pacemaker, become: true}
-
-- hosts: iscsi_hosts
-
-  roles:
-   - { role: iscsi, become: true}
-
-#   roles:
-#     - { role: lvm, become: true}
-#     - { role: OndrejHome.targetcli, become: true }
-#   vars:
-#     iscsi_targets:
-#       - wwn: "iqn.1994-05.com.redhat:target"
-#         disks:
-#           - path: /dev/iscsi/lvm
-#             name: test1
-#             type: block
-#           # - path: /dev/c7vg/LV2
-#           #   name: test2
-#           #   type: block
-#         initiators:
-#           - 'iqn.1994-05.com.redhat:client1'
-#           - 'iqn.1994-05.com.redhat:client2'
-#           - 'iqn.1994-05.com.redhat:client3'
+#     - { role: gfs, become: true }
           

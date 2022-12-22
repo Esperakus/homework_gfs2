@@ -99,12 +99,14 @@ resource "yandex_compute_instance" "gfs" {
     }
   }
 
-
-
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet01.id
     # nat       = true
   }
+
+  # network_interface {
+  #   subnet_id = yandex_vpc_subnet.subnet02.id
+  # }
 
   metadata = {
     ssh-keys = "cloud-user:${tls_private_key.ssh.public_key_openssh}"

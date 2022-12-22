@@ -7,3 +7,6 @@ ${ip}
 %{ for ip in iscsi_workers ~}
 ${ip}
 %{ endfor ~}
+
+[ansible_host]
+localhost

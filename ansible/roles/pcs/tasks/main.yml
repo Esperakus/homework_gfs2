@@ -5,6 +5,7 @@
     dnf:
       name: "{{ packages }} "
       state: present
+      enablerepo: ha
     vars:
       packages:
         - pacemaker 
@@ -20,3 +21,7 @@
       enabled: true
       state: started
       
+  - name: change password
+    user:
+      name: hacluster
+      password: "{{ 'Rawocosi32!' | password_hash('sha512') }}"

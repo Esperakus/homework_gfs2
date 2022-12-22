@@ -1,27 +1,28 @@
 ---
 # tasks file for gfs
 
-  - name: install pacemaker
+  - name: install iscsi initiator utils
     dnf:
-      name: "{{ packages }} "
+      name:
+        - iscsi-initiator-utils
       state: present
-      enablerepo:
-        - ha
-    vars:
-      packages:
-      - 'cluster-glue'
-      - 'corosync'
-      - 'crmsh'
-      - 'fence-agents'
-      - 'pacemaker'
-      - 'pcs'
-      - 'resource-agents'
 
-  - name: start pcs
+  - name: template initiator name
+    template:
+      src: ./templates/initiatorname.iscsi
+      dest: /etc/iscsi/initiatorname.iscsi
+
+  - name: start iscsi
     systemd:
-      name: pcsd
-      enabled: true
+      name: "{{ item }}"
       state: started
+      enabled: true
+    with_items:
+      - iscsi
+      - iscsid
 
-  - name: turn off stonith (not for prod, but for yandex.cloud)
-    command: pcs property set stonith-enabled=false
+  - name: login to iscsi target
+    open_iscsi:
+      portal: iscsi
+      discover: yes
+      login: yes  

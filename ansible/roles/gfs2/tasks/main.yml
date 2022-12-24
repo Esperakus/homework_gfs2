@@ -1,0 +1,8 @@
+---
+# tasks file for gfs2
+
+- name: set lmv config
+  lineinfile:
+    path: /etc/lvm/lvm.conf
+    regexp: '^#use_lvmlockd'
+    line: use_lvmlockd = 1

@@ -6,11 +6,16 @@
 - name: install pacemaker packages
   yum: 
     name: "{{ item }}"
-    enablerepo: ha
+    enablerepo: 
+      - ha
+      - resilientstorage
   with_items:
     - pacemaker
     - pcs
     - psmisc
+    - lvm2-lockd
+    - gfs2-utils 
+    - dlm
     # - policycoreutils-python
 
 # - name: "Build hosts file"

@@ -9,7 +9,7 @@ corosync_config_file: '/etc/corosync/corosync.conf'
 
 # Defines the number of nodes to be functional in order to avoid split-brain
 # scenarios...ex. 2-nodes = 1, 3-nodes = 2
-corosync_expected_votes: "{{ ( groups[pacemaker_cluster_group]|count /2 ) | round (0, 'ceil') | int }}"
+corosync_expected_votes: "{{ ( groups[gfs_hosts]|count /2 ) | round (0, 'ceil') | int }}"
 
 # Corosync itself works without a cluster name, but DLM needs one.
 # The cluster name is also written into the VG metadata of newly
@@ -92,11 +92,12 @@ pacemaker_cluster_settings: []
 #
 # Generate new password
 # echo "haclusteradmin" | sha512sum
-pacemaker_hacluster_name: 'otusha'
+pacemaker_hacluster_name: 'ha_cluster'
 pacemaker_hacluster_user: 'hacluster'
-pacemaker_hacluster_password: 'haPASS1804'
-pacemaker_hacluster_sha: '$6$65ZVK3CdSgjLeHOF$vl3r.cjQukU..qQnU5BhIsDFwrCorxUvMY1A83dX8KriWjDqFBevxdmpaS0CjFUYqbesUvQ51SornyHmjppcA/'
+# pacemaker_hacluster_password: 'haPASS1804'
+pacemaker_hacluster_password: 'Rawocosi32'
+# pacemaker_hacluster_sha: '$6$65ZVK3CdSgjLeHOF$vl3r.cjQukU..qQnU5BhIsDFwrCorxUvMY1A83dX8KriWjDqFBevxdmpaS0CjFUYqbesUvQ51SornyHmjppcA/'
 
 # Defines if host is considered to be primary
 # this should be set in host_vars/hostname as true for only one host
-pacemaker_primary_server: '{{ groups[pacemaker_cluster_group][0] }}'
+pacemaker_primary_server: '{{ groups[gfs-hosts][0] }}'

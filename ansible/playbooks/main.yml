@@ -4,17 +4,13 @@
   roles:
     - { role: general-el8, become: true }
 
+- hosts: iscsi_hosts
+  roles:
+   - { role: iscsi, become: true }
+
 - hosts: gfs_hosts
   roles:
-    # - { role: pcs, become: true }
-    # - { role: ondrejhome.ha-cluster-pacemaker, become: true, cluster_name: 'test-cluster', cluster_etc_hosts: false, cluster_firewall: false, cluster_configure_fence_xvm: false, cluster_user_pass: 'Rawocosi32!' }
-    - {role: pacemaker, become: true}
-
-# - hosts: iscsi_hosts
-#   roles:
-#    - { role: iscsi, become: true }
-
-# - hosts: gfs_hosts
-#   roles:
-#     - { role: gfs, become: true }
+    - { role: iscsi-target, become: true }
+    - { role: pacemaker, become: true }
+    - { role: gfs2, become: true}
           

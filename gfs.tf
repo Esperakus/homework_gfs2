@@ -34,7 +34,8 @@ resource "yandex_compute_instance" "ansible" {
   provisioner "remote-exec" {
     inline = [
       "echo 'host is up'",
-      "sudo dnf install -y epel-release",
+      "sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm",
+      "sudo dnf update -y",
       "sudo dnf install -y ansible"
     ]
   }
@@ -70,9 +71,23 @@ resource "yandex_compute_instance" "ansible" {
   }
 
   provisioner "remote-exec" {
-    # command = "ansible-playbook -u cloud-user -i '${self.network_interface.0.nat_ip_address},' --private-key id_rsa nginx.yml"
     inline = [
-      "ansible-playbook -u cloud-user -i /home/cloud-user/ansible/hosts /home/cloud-user/ansible/playbooks/main.yml"
+      "ansible-playbook -u cloud-user -i /home/cloud-user/ansible/hosts /home/cloud-user/ansible/playbooks/main.yml",
+      "ssh gfs-server0 'sudo pcs property set no-quorum-policy=freeze'",
+      "ssh gfs-server0 'sudo pcs resource create dlm ocf:pacemaker:controld op monitor interval=30s on-fail=ignore --group locking'",
+      "ssh gfs-server0 'sudo pcs resource clone locking interleave=true'",
+      "ssh gfs-server0 'sudo pcs resource create lvmlockdd ocf:heartbeat:lvmlockd op monitor interval=30s on-fail=ignore --group locking'",
+      "ssh gfs-server0 'sudo pvcreate /dev/sda'",
+      "ssh gfs-server0 'sudo vgcreate --shared vg_gfs2 /dev/sda'",
+      "ssh gfs-server1 'sudo vgchange --lock-start vg_gfs2'",
+      "ssh gfs-server2 'sudo vgchange --lock-start vg_gfs2'",
+      "ssh gfs-server0 'sudo lvcreate -l 100%FREE -n lv_gfs2 vg_gfs2; mkfs.gfs2 -j2 -p lock_dlm -t ha_cluster:gfs2-01 /dev/vg_gfs2/lv_gfs2'",
+      "ssh gfs-server0 'sudo pcs resource create shared_lv ocf:heartbeat:LVM-activate lvname=lv_gfs2 vgname=vg_gfs2 activation_mode=shared vg_access_mode=lvmlockd --group shared_vg'",
+      "ssh gfs-server0 'sudo pcs resource clone shared_vg interleave=true'",
+      "ssh gfs-server0 'sudo pcs constraint order start locking-clone then shared_vg-clone'",
+      "ssh gfs-server0 'sudo pcs constraint colocation add shared_vg-clone with locking-clone'",
+      "ssh gfs-server0 'sudo pcs resource create shared_fs ocf:heartbeat:Filesystem device=/dev/vg_gfs2/lv_gfs2 directory=/home/gfs2-share fstype=gfs2 options=noatime op monitor interval=10s on-fail=fence --group shared_vg'",
+      "ssh gfs-server0 'pcs cluster start --all'",
     ]
   }
 
@@ -85,8 +100,8 @@ resource "yandex_compute_instance" "ansible" {
 resource "yandex_compute_instance" "gfs" {
 
   count    = 3
-  name     = "gfs${count.index}"
-  hostname = "gfs${count.index}"
+  name     = "gfs-server${count.index}"
+  hostname = "gfs-server${count.index}"
 
   resources {
     cores  = 2
@@ -103,10 +118,6 @@ resource "yandex_compute_instance" "gfs" {
     subnet_id = yandex_vpc_subnet.subnet01.id
     # nat       = true
   }
-
-  # network_interface {
-  #   subnet_id = yandex_vpc_subnet.subnet02.id
-  # }
 
   metadata = {
     ssh-keys = "cloud-user:${tls_private_key.ssh.public_key_openssh}"

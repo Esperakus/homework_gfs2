@@ -1,7 +1,7 @@
 - name: config | Setting hacluster password
   user:
     name:  "{{ pacemaker_hacluster_user }}"
-    password: "{{ pacemaker_hacluster_sha }}"
+    password: "{{ pacemaker_hacluster_password | password_hash('sha512') }}"
   become: true
 
 - name: pcs auth

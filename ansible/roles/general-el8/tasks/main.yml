@@ -13,58 +13,57 @@
       state: present
 
   - name: Install EPEL repo.
-    # become: true
-    yum:
+    dnf:
       name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
       state: present
     register: result
 
   - name: Upgrade all
-    # become: true
     dnf:
       name: '*'
       state: latest
       update_cache: true
+      nobest: true
 
   - name: Install packages
-    # become: true
     dnf:
-      name: "{{ packages }} "
+      name: "{{ item }} "
       state: present
-    vars:
-      packages:
-        - openssl-devel
-        - bzip2-devel
-        - libffi-devel
-        - nano
-        - git
-        - bash-completion
-        - logwatch
-        - lsscsi
-        - mc
-        - mlocate
-        - mtr
-        - nfs-utils
-        - parted
-        - pciutils
-        - pinfo
-        - policycoreutils-python-utils
-        - rsync
-        - sysstat
-        - telnet
-        - unzip
-        - wget
-        - net-tools
-        - yum-utils
-        - htop
-        - device-mapper-persistent-data
-        - lvm2
-        - lsof
-        - gcc
-        - nmap
-        - iftop
-        - atop
-        - vim
-        # - python3-firewall
-        - iotop
-        - glibc-langpack-ru
+    with_items:
+      - openssl-devel
+      - bzip2-devel
+      - libffi-devel
+      - nano
+      - git
+      - bash-completion
+      - logwatch
+      - lsscsi
+      - mc
+      - mlocate
+      - mtr
+      - nfs-utils
+      - parted
+      - pciutils
+      - pinfo
+      - policycoreutils-python-utils
+      - rsync
+      - sysstat
+      - telnet
+      - unzip
+      - wget
+      - net-tools
+      - yum-utils
+      - htop
+      - device-mapper-persistent-data
+      - lvm2
+      - lsof
+      - gcc
+      - nmap
+      - iftop
+      - atop
+      - vim
+      - iotop
+      - glibc-langpack-ru
+
+  - name: disable selinux
+    command: setenforce 0

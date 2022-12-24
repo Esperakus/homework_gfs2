@@ -24,6 +24,6 @@
       targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/portals create 0.0.0.0
       targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/luns create /backstores/block/disk01 lun=1
       targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1 set attribute authentication=0
-      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs0
-      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs1
-      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs2
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs-server0
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs-server1
+      targetcli /iscsi/iqn.2022-12.ru.otus:storage.target00/tpg1/acls/ create iqn.2022-12.ru.otus:gfs-server2

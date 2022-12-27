@@ -13,4 +13,48 @@
     - { role: iscsi-target, become: true }
     - { role: pacemaker, become: true }
     - { role: gfs2, become: true}
-          
+
+- hosts: gfs_hosts[0]
+  become: true
+  tasks:
+    - name: set pcs on gfs0
+      shell: |
+        pcs property set no-quorum-policy=freeze
+        pcs resource create dlm ocf:pacemaker:controld op monitor interval=30s on-fail=ignore --group locking
+        pcs resource clone locking interleave=true
+        pcs resource create lvmlockdd ocf:heartbeat:lvmlockd op monitor interval=30s on-fail=ignore --group locking
+
+- hosts: gfs_hosts[0]
+  become: true
+  tasks:
+    - name: set pv and vg on gfs0
+      lvg:
+        vg: vg_gfs2
+        pvs: /dev/sda
+        vg_options: '--shared'
+
+- hosts: gfs_hosts[1:]
+  become: true
+  tasks:
+    - name: change vg on other gfs nodes
+      command: vgchange --lock-start vg_gfs2
+
+- hosts: gfs_hosts[0]
+  become: true
+  tasks:
+    - name: create lv on gfs0
+      lvol:
+        vg: vg_gfs2
+        size: 100%FREE
+        lv: lv_gfs2
+    - name: mkfs.gfs2
+      
+    - name: set pcs resources
+      shell: |
+        pcs resource create shared_lv ocf:heartbeat:LVM-activate lvname=lv_gfs2 vgname=vg_gfs2 activation_mode=shared vg_access_mode=lvmlockd --group shared_vg
+        pcs resource clone shared_vg interleave=true
+        pcs constraint order start locking-clone then shared_vg-clone
+        pcs constraint colocation add shared_vg-clone with locking-clone
+        pcs resource create shared_fs ocf:heartbeat:Filesystem device=/dev/vg_gfs2/lv_gfs2 directory=/home/gfs2-share fstype=gfs2 options=noatime op monitor interval=10s on-fail=ignore --group shared_vg
+        pcs cluster start --all
+  

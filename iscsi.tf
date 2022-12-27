@@ -1,8 +1,7 @@
-resource "yandex_compute_instance" "gfs" {
+resource "yandex_compute_instance" "iscsi" {
 
-  count    = 3
-  name     = "gfs-server${count.index}"
-  hostname = "gfs-server${count.index}"
+  name     = "iscsi"
+  hostname = "iscsi"
 
   resources {
     cores  = 2
@@ -15,6 +14,11 @@ resource "yandex_compute_instance" "gfs" {
     }
   }
 
+  secondary_disk {
+    disk_id     = yandex_compute_disk.iscsi.id
+    device_name = "iscsi_disk"
+  }
+
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet01.id
     # nat       = true
@@ -24,4 +28,9 @@ resource "yandex_compute_instance" "gfs" {
     ssh-keys = "cloud-user:${tls_private_key.ssh.public_key_openssh}"
   }
 
+}
+
+resource "yandex_compute_disk" "iscsi" {
+  name = "iscsi-target"
+  size = 2
 }

@@ -57,6 +57,17 @@ resource "yandex_compute_instance" "ansible" {
     destination = "/home/cloud-user/.ssh/id_rsa.pub"
   }
 
+  provisioner "file" {
+    source      = "id_rsa"
+    destination = "/home/cloud-user/ansible/roles/pacemaker/files/id_rsa"
+
+  }
+
+  provisioner "file" {
+    source      = "id_rsa.pub"
+    destination = "/home/cloud-user/ansible/roles/pacemaker/files/id_rsa.pub"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "chmod 600 /home/cloud-user/.ssh/id_rsa"

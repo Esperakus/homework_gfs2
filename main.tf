@@ -47,6 +47,5 @@ resource "local_file" "hosts" {
   depends_on = [
     yandex_compute_instance.gfs,
     yandex_compute_instance.iscsi,
-    # yandex_compute_instance.db,
   ]
 }

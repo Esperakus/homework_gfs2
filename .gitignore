@@ -9,4 +9,3 @@ terraform.tfstate.backup
 /id_rsa.pub
 /ansible/hosts
 .DS_Store
-variables.tf

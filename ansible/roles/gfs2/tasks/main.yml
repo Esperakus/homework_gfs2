@@ -1,8 +1,29 @@
 ---
 # tasks file for gfs2
 
-- name: set lmv config
+- name: install gfs2 packages
+  dnf:
+    enablerepo:
+      - resilientstorage
+    name:
+      - lvm2-lockd
+      - gfs2-utils
+      - dlm
+    state: present
+    update_cache: true
+
+- name: set lvm config
   lineinfile:
     path: /etc/lvm/lvm.conf
-    regexp: '^#use_lvmlockd'
+    regexp: '# use_lvmlockd = 0'
     line: use_lvmlockd = 1
+
+- name: configure dlm and lvmlockd resources
+  shell: |
+    pcs property set no-quorum-policy=freeze
+    pcs resource create dlm --group locking ocf:pacemaker:controld allow_stonith_disabled=1 op monitor interval=30s on-fail=ignore
+    sleep 10
+    pcs resource clone locking interleave=true
+    sleep 10
+    pcs resource create lvmlockd --group locking ocf:heartbeat:lvmlockd op monitor interval=30s on-fail=ignore
+  run_once: true

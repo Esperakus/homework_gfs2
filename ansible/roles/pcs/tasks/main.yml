@@ -1,0 +1,46 @@
+---
+# tasks file for pcs
+- name: install pcs packages
+  dnf:
+    enablerepo: ha
+    name:
+      - pacemaker
+      - pcs
+      - fence-agents-all
+    state: present
+    update_cache: true
+
+- name: start pcs service
+  systemd:
+    name: pcsd
+    state: started
+    enabled: true
+
+- name: change hacluster user password
+  user:
+    name: hacluster
+    password: "{{ hacluster_password | password_hash('sha512') }}"
+
+- name: pcs auth
+  command: pcs host auth {{ groups['gfs_hosts']|join(' ') }} -u hacluster -p "{{ hacluster_password }}"
+  run_once: true
+
+- name: pcs cluster setup
+  command: pcs cluster setup gfs2_cluster {{ groups['gfs_hosts']|join(' ') }}
+  run_once: true
+
+- name: pcs cluster start and enable
+  shell: |
+    pcs cluster start --all
+    pcs cluster enable --all
+  run_once: true
+
+- name: start corosync
+  systemd:
+    name: corosync
+    state: started
+    enabled: true
+
+- name: disable stonith
+  command: pcs property set stonith-enabled=false
+  run_once: true

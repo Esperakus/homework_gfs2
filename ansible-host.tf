@@ -70,9 +70,9 @@ resource "yandex_compute_instance" "ansible" {
 
   }
 
-  # provisioner "remote-exec" {
-  #   inline = [
-  # "ansible-playbook -u cloud-user -i /home/cloud-user/ansible/hosts /home/cloud-user/ansible/playbooks/main.yml",
+  provisioner "remote-exec" {
+    inline = [
+  "ansible-playbook -u cloud-user -i /home/cloud-user/ansible/hosts /home/cloud-user/ansible/playbooks/main.yml",
   # "ssh gfs-server0 'sudo pcs property set no-quorum-policy=freeze'",
   # "ssh gfs-server0 'sudo pcs resource create dlm ocf:pacemaker:controld op monitor interval=30s on-fail=ignore --group locking'",
   # "ssh gfs-server0 'sudo pcs resource clone locking interleave=true'",
@@ -88,8 +88,8 @@ resource "yandex_compute_instance" "ansible" {
   # "ssh gfs-server0 'sudo pcs constraint colocation add shared_vg-clone with locking-clone'",
   # "ssh gfs-server0 'sudo pcs resource create shared_fs ocf:heartbeat:Filesystem device=/dev/vg_gfs2/lv_gfs2 directory=/home/gfs2-share fstype=gfs2 options=noatime op monitor interval=10s on-fail=fence --group shared_vg'",
   # "ssh gfs-server0 'pcs cluster start --all'",
-  #   ]
-  # }
+    ]
+  }
 
   depends_on = [
     yandex_compute_instance.gfs,

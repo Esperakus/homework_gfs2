@@ -40,7 +40,7 @@ $ terraform apply
 Для этого из рабочей папки проекта надо выполнить:
 
 ```
-[homework_mysql]$ ssh cloud-user@{external_ip_address_ansible} -i id_rsa
+[homework_gf2]$ ssh cloud-user@{external_ip_address_ansible} -i id_rsa
 ```
 **external_ip_address_ansible** можно посмотреть в выводе terraform или консоли yandex.cloud.
 
